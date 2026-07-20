@@ -46,6 +46,7 @@ export default simulation((setUp) => {
         return scn2.injectOpen(atOnceUsers(vu));
     }
   };
+  
 
   const getAssertions = () => {
     switch (testType) {
