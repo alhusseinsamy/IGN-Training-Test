@@ -1,6 +1,11 @@
 import { atOnceUsers, getParameter, global, scenario, simulation } from "@gatling.io/core";
 import { http } from "@gatling.io/http";
-import { browseAndAddToCart, homePageGroup, loginGroup } from "./groups/scenarioGroups";
+import {
+  browseAllPagesAndAddToCart,
+  browseAndAddToCart,
+  homePageGroup,
+  loginGroup
+} from "./groups/scenarioGroups";
 
 export default simulation((setUp) => {
   // Load VU count from system properties
@@ -22,6 +27,8 @@ export default simulation((setUp) => {
   // Reference: https://docs.gatling.io/reference/script/core/scenario/
   const scn = scenario("Scenario").exec(homePageGroup, loginGroup, browseAndAddToCart);
 
+  const scn2 = scenario("Scenario").exec(homePageGroup, loginGroup, browseAllPagesAndAddToCart);
+
   // Define assertions
   // Reference: https://docs.gatling.io/reference/script/core/assertions/
   const assertions = [
@@ -32,11 +39,11 @@ export default simulation((setUp) => {
   const injectionProfile = () => {
     switch (testType) {
       case "stress":
-        return scn.injectOpen(stressPeakUsers(vu).during(duration));
+        return scn2.injectOpen(stressPeakUsers(vu).during(duration));
       case "smoke":
-        return scn.injectOpen(atOnceUsers(1));
+        return scn2.injectOpen(atOnceUsers(1));
       default:
-        return scn.injectOpen(atOnceUsers(vu));
+        return scn2.injectOpen(atOnceUsers(vu));
     }
   };
 
