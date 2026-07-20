@@ -11,13 +11,13 @@ import {
 import { http } from "@gatling.io/http";
 import { addToCart, checkout, login, login1, products, session } from "./endpoints/apiEndpoints";
 import { homePage, loginPage } from "./endpoints/websiteEndpoints";
+import { createAddToCartBody, setPageNumber, setSearchKey } from "./actions/actions";
+import { browseAndAddToCart, homePageGroup, loginGroup } from "./groups/scenarioGroups";
 
 export default simulation((setUp) => {
   // Load VU count from system properties
   // Reference: https://docs.gatling.io/guides/passing-parameters/
   const vu = parseInt(getParameter("vu", "1"));
-
-  const usersfeeder = jsonFile("data/users.json").circular();
 
   // Define HTTP configuration
   // Reference: https://docs.gatling.io/reference/script/protocols/http/protocol/
@@ -30,24 +30,7 @@ export default simulation((setUp) => {
 
   // Define scenario
   // Reference: https://docs.gatling.io/reference/script/core/scenario/
-  const scn = scenario("Scenario").exec(
-    session,
-    homePage,
-    exec((session) => session.set("pageNumber", "0")),
-    exec((session) => session.set("searchKey", "")),
-    products,
-    loginPage,
-    feed(usersfeeder),
-    login,
-    exec((session) => {
-      const productList = JSON.parse(session.get("products"));
-      const randomProduct = productList[Math.floor(Math.random() * productList.length)];
-      const cartItems = JSON.stringify([randomProduct]);
-      return session.set("cartItems", cartItems);
-    }),
-    addToCart,
-    checkout
-  );
+  const scn = scenario("Scenario").exec(homePageGroup, loginGroup, browseAndAddToCart);
 
   // Define assertions
   // Reference: https://docs.gatling.io/reference/script/core/assertions/
