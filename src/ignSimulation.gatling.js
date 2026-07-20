@@ -7,6 +7,7 @@ export default simulation((setUp) => {
   // Reference: https://docs.gatling.io/guides/passing-parameters/
   const vu = parseInt(getParameter("vu", "1"));
   const testType = getParameter("testType", "smoke");
+  const duration = parseInt(getParameter("duration", "10"));
 
   // Define HTTP configuration
   // Reference: https://docs.gatling.io/reference/script/protocols/http/protocol/
@@ -28,9 +29,20 @@ export default simulation((setUp) => {
     global().failedRequests().percent().lt(5)
   ];
 
+  const injectionProfile = () => {
+    switch (testType) {
+      case "stress":
+        return scn.injectOpen(stressPeakUsers(vu).during(duration));
+      case "smoke":
+        return scn.injectOpen(atOnceUsers(1));
+      default:
+        return scn.injectOpen(atOnceUsers(vu));
+    }
+  };
+
   // Define injection profile and execute the test
   // Reference: https://docs.gatling.io/reference/script/core/injection/
-  setUp(scn.injectOpen(atOnceUsers(vu)))
+  setUp(injectionProfile())
     .assertions(...assertions)
     .protocols(httpProtocol);
 });
