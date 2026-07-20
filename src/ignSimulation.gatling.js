@@ -1,7 +1,7 @@
 import { simulation, atOnceUsers, global, scenario, getParameter, exec } from "@gatling.io/core";
 import { http } from "@gatling.io/http";
-import { products, session } from "./endpoints/apiEndpoints";
-import { homePage } from "./endpoints/websiteEndpoints";
+import { login, login1, products, session } from "./endpoints/apiEndpoints";
+import { homePage, loginPage } from "./endpoints/websiteEndpoints";
 
 export default simulation((setUp) => {
   // Load VU count from system properties
@@ -24,7 +24,9 @@ export default simulation((setUp) => {
     homePage,
     exec((session) => session.set("pageNumber", "0")),
     exec((session) => session.set("searchKey", "")),
-    products
+    products,
+    loginPage,
+    login
   );
 
   // Define assertions
