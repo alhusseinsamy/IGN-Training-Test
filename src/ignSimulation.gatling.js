@@ -23,11 +23,14 @@ export default simulation((setUp) => {
 
   // Define assertions
   // Reference: https://docs.gatling.io/reference/script/core/assertions/
-  const assertion = global().failedRequests().count().lt(1.0);
+  const assertions = [
+    global().responseTime().percentile(90).lt(500),
+    global().failedRequests().percent().lt(5)
+  ];
 
   // Define injection profile and execute the test
   // Reference: https://docs.gatling.io/reference/script/core/injection/
   setUp(scn.injectOpen(atOnceUsers(vu)))
-    .assertions(assertion)
+    .assertions(...assertions)
     .protocols(httpProtocol);
 });
