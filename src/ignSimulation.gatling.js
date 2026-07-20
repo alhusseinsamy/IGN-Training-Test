@@ -1,23 +1,12 @@
-import {
-  simulation,
-  atOnceUsers,
-  global,
-  scenario,
-  getParameter,
-  exec,
-  jsonFile,
-  feed
-} from "@gatling.io/core";
+import { atOnceUsers, getParameter, global, scenario, simulation } from "@gatling.io/core";
 import { http } from "@gatling.io/http";
-import { addToCart, checkout, login, login1, products, session } from "./endpoints/apiEndpoints";
-import { homePage, loginPage } from "./endpoints/websiteEndpoints";
-import { createAddToCartBody, setPageNumber, setSearchKey } from "./actions/actions";
 import { browseAndAddToCart, homePageGroup, loginGroup } from "./groups/scenarioGroups";
 
 export default simulation((setUp) => {
   // Load VU count from system properties
   // Reference: https://docs.gatling.io/guides/passing-parameters/
   const vu = parseInt(getParameter("vu", "1"));
+  const testType = getParameter("testType", "smoke");
 
   // Define HTTP configuration
   // Reference: https://docs.gatling.io/reference/script/protocols/http/protocol/
