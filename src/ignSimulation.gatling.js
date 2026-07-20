@@ -9,7 +9,7 @@ import {
   feed
 } from "@gatling.io/core";
 import { http } from "@gatling.io/http";
-import { login, login1, products, session } from "./endpoints/apiEndpoints";
+import { addToCart, login, login1, products, session } from "./endpoints/apiEndpoints";
 import { homePage, loginPage } from "./endpoints/websiteEndpoints";
 
 export default simulation((setUp) => {
@@ -38,7 +38,14 @@ export default simulation((setUp) => {
     products,
     loginPage,
     feed(usersfeeder),
-    login
+    login,
+    exec((session) => {
+      const productList = JSON.parse(session.get("products"));
+      const randomProduct = productList[Math.floor(Math.random() * productList.length)];
+      const cartItems = JSON.stringify([randomProduct]);
+      return session.set("cartItems", cartItems);
+    }),
+    addToCart
   );
 
   // Define assertions

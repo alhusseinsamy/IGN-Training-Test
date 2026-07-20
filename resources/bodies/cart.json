@@ -1,0 +1,4 @@
+{
+  "cart": #{cartItems},
+  "sessionId": "#{sessionId}"
+}
