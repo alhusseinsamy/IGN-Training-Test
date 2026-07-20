@@ -11,8 +11,8 @@ export const products = http("Products")
 
 export const login = http("Login")
   .post("/login")
-  .formParam("username", "admin")
-  .formParam("password", "gatling")
+  .formParam("username", "#{username}")
+  .formParam("password", "#{password}")
   .check(status().is(200));
 
 export const login1 = http("Login")
