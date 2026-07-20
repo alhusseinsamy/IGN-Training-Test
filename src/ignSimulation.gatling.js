@@ -40,9 +40,20 @@ export default simulation((setUp) => {
     }
   };
 
+  const getAssertions = () => {
+    switch (testType) {
+      case "stress":
+        return assertions;
+      case "smoke":
+        return [global().failedRequests().count().lt(1)];
+      default:
+        return [global().failedRequests().count().lt(1)];
+    }
+  };
+
   // Define injection profile and execute the test
   // Reference: https://docs.gatling.io/reference/script/core/injection/
   setUp(injectionProfile())
-    .assertions(...assertions)
+    .assertions(...getAssertions())
     .protocols(httpProtocol);
 });
