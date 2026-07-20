@@ -17,6 +17,7 @@ export const login = http("Login")
   .post("/login")
   .formParam("username", "#{username}")
   .formParam("password", "#{password}")
+  .check(jmesPath("accessToken").saveAs("accessToken"))
   .check(status().is(200));
 
 export const login1 = http("Login")
@@ -28,5 +29,10 @@ export const login1 = http("Login")
 export const addToCart = http("Add to cart")
   .post("/cart")
   .body(ElFileBody("bodies/cart.json"))
-  .header("content-type", "application/x-www-form-urlencoded")
+  .check(status().is(200));
+
+export const checkout = http("Checkout")
+  .post("/checkout")
+  .body(ElFileBody("bodies/cart.json"))
+  .header("Authorization", "#{accessToken}")
   .check(status().is(200));
